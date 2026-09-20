@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marker with 8 Image Selectors</title>
+  
+  <!-- A-Frame -->
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <!-- MindAR for Image Tracking -->
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
+  <!-- Look-At Component -->
+  <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
+
+  <style>
+    body { margin: 0; overflow: hidden; font-family: sans-serif; }
+
+    /* Scrollable UI Selector Buttons Container at the bottom of the screen */
+    #ui-container {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      max-width: 95vw;
+      padding: 10px;
+      z-index: 10;
+      scrollbar-width: thin;
+    }
+
+    .ar-button {
+      background: #1E293B;
+      color: #38BDF8;
+      border: 2px solid #38BDF8;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      transition: all 0.2s ease;
+    }
+
+    .ar-button:active, .ar-button.active {
+      background: #38BDF8;
+      color: #0F172A;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 8 Selector Buttons at the Bottom -->
+  <div id="ui-container">
+    <button class="ar-button active" onclick="switchImage(0)">Image 1</button>
+    <button class="ar-button" onclick="switchImage(1)">Image 2</button>
+    <button class="ar-button" onclick="switchImage(2)">Image 3</button>
+    <button class="ar-button" onclick="switchImage(3)">Image 4</button>
+    <button class="ar-button" onclick="switchImage(4)">Image 5</button>
+    <button class="ar-button" onclick="switchImage(5)">Image 6</button>
+    <button class="ar-button" onclick="switchImage(6)">Image 7</button>
+    <button class="ar-button" onclick="switchImage(7)">Image 8</button>
+  </div>
+
+  <!-- AR Scene with MindAR Image Tracking -->
+  <a-scene 
+    mindar-image="imageTargetSrc: ./targets.mind;" 
+    color-space="sRGB" 
+    renderer="colorManagement: true, physicallyCorrectLights" 
+    vr-mode-ui="enabled: false" 
+    device-orientation-permission-ui="enabled: false">
+
+    <!-- Preload all 8 overlay images -->
+    <a-assets>
+      <img id="img0" src="./assets/image_0.png">
+      <img id="img1" src="./assets/image_1.png">
+      <img id="img2" src="./assets/image_2.png">
+      <img id="img3" src="./assets/image_3.png">
+      <img id="img4" src="./assets/image_4.png">
+      <img id="img5" src="./assets/image_5.png">
+      <img id="img6" src="./assets/image_6.png">
+      <img id="img7" src="./assets/image_7.png">
+    </a-assets>
+
+    <!-- Camera -->
+    <a-camera id="mainCamera" position="0 0 0" look-controls="enabled: false"></a-camera>
+
+    <!-- Single Target Anchor (Triggers when the physical marker is visible) -->
+    <a-entity mindar-image-target="targetIndex: 0">
+      
+      <!-- Container attached to marker, always facing the camera -->
+      <a-entity position="0 0 0.05" look-at="#mainCamera">
+
+        <!-- Transparent Image Overlay -->
+        <a-plane 
+          id="activeOverlayImage" 
+          src="#img0" 
+          width="1.0" 
+          height="1.0" 
+          material="opacity: 0.65; transparent: true; alphaTest: 0.01;">
+        </a-plane>
+
+      </a-entity>
+    </a-entity>
+
+  </a-scene>
+
+  <script src="./app.js"></script>
+</body>
+</html>
